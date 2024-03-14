@@ -40,11 +40,8 @@ class DbHelper {
         'INSERT INTO items(idList, name, quantity, note) VALUES (1, "Apples","2 Kg","Better if they are green")';
     await db!.execute(query.toString());
     List<Map<String, dynamic>> lists = await db!.query('lists');
-    List<Map<String, dynamic>> items = await db!.query('items');
-    print(items.length);
     return lists;
   }
-
 
   Future insertList(ShoppingList list) async {
     int id = await db!.insert('lists', list.toMap(),
@@ -56,5 +53,16 @@ class DbHelper {
     int id = await db!.insert('items', items.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
+  }
+
+  Future<List<ShoppingList>> getLists() async {
+    final List<Map<String, dynamic>> maps = await db!.query('lists');
+    return List.generate(maps.length, (i) {
+      return ShoppingList(
+        maps[i]['id'],
+        maps[i]['name'],
+        maps[i]['priority'],
+      );
+    });
   }
 }
