@@ -5,6 +5,7 @@ import 'package:shopping/model/shopping_list.dart';
 class ShoppingListDialog {
   final txtName = TextEditingController();
   final txtPriority = TextEditingController();
+  void Function()? onDataSaved;
 
   Widget builDialog(BuildContext context, ShoppingList list, bool isNew) {
     DbHelper helper = DbHelper();
@@ -30,15 +31,15 @@ class ShoppingListDialog {
               ),
             ),
             ElevatedButton(
-                onPressed: () async {
-                  list.name = txtName.text;
-                  list.priority = int.parse(txtPriority.text);
-                  helper.insertList(list);
-                  Navigator.pop(context);
-                  await helper.getLists();
-
-                },
-                child: const Text('Save Shopping List'))
+              onPressed: () async {
+                list.name = txtName.text;
+                list.priority = int.parse(txtPriority.text);
+                Navigator.pop(context);
+                await helper.insertList(list);
+                onDataSaved?.call();
+              },
+              child: const Text('Save Shopping List'),
+            ),
           ],
         ),
       ),
