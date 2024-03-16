@@ -8,7 +8,7 @@ class DbHelper {
   Database? db;
 
   Future openDb() async {
-    db ??= await openDatabase(join(await getDatabasesPath(), 'shopping'),
+    db ??= await openDatabase(join(await getDatabasesPath(), 'shopping.db'),
         onCreate: (database, version) async {
       await database.execute(
           'CREATE TABLE lists(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, priority INTEGER)');
@@ -44,18 +44,24 @@ class DbHelper {
   }
 
   Future insertList(ShoppingList list) async {
+    db = await openDb();
+    if (db == null) {
+      throw Exception('Database is not initialized!');
+    }
     int id = await db!.insert('lists', list.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
   Future insertItem(ListItem items) async {
+    db = await openDb();
     int id = await db!.insert('items', items.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
   Future<List<ShoppingList>> getLists() async {
+    db = await openDb();
     final List<Map<String, dynamic>> maps = await db!.query('lists');
     return List.generate(maps.length, (i) {
       return ShoppingList(
@@ -67,6 +73,7 @@ class DbHelper {
   }
 
   Future<List<ListItem>> getItems(int idList) async {
+    db = await openDb();
     final List<Map<String, dynamic>> maps =
         await db!.query('items', where: 'idList = ?', whereArgs: [idList]);
     return List.generate(maps.length, (i) {
@@ -81,6 +88,7 @@ class DbHelper {
   }
 
   Future<int> deleteList(ShoppingList list) async {
+    db = await openDb();
     int result =
         await db!.delete("items", where: "idList = ?", whereArgs: [list.id]);
     result = await db!.delete("lists", where: "id = ?", whereArgs: [list.id]);
