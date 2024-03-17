@@ -23,37 +23,40 @@ class DetailItem extends StatelessWidget {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          Center(
-            child: Text(
-              '${data['name']}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            Center(
+              child: Text(
+                '${data['name']}',
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Quantity:',
-            style: TextStyle(
-              fontSize: 16,
-              decoration: TextDecoration.underline,
+            const SizedBox(height: 10),
+            const Text(
+              'Quantity:',
+              style: TextStyle(
+                fontSize: 16,
+                decoration: TextDecoration.underline,
+              ),
             ),
-          ),
-          Text('${data['quantity']}'),
-          const SizedBox(height: 10),
-          const Text(
-            'Note',
-            style: TextStyle(
-              fontSize: 16,
-              decoration: TextDecoration.underline,
+            Text('${data['quantity']}'),
+            const SizedBox(height: 10),
+            const Text(
+              'Note',
+              style: TextStyle(
+                fontSize: 16,
+                decoration: TextDecoration.underline,
+              ),
             ),
-          ),
-          Text('${data['note']}'),
-          const SizedBox(height: 20),
-        ],
+            Text('${data['note']}'),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
