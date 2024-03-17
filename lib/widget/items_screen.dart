@@ -46,7 +46,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
           return ListTile(
             title: Text(items![index].name),
             subtitle: Text(
-                'Quantity: ${items![index].quantity} - Note: ${items![index].note}'),
+              'Quantity: ${items![index].quantity} - Note: ${items![index].note}',
+              overflow: TextOverflow.ellipsis,
+            ),
             onTap: () {},
             trailing: IconButton(
               icon: const Icon(Icons.edit),
