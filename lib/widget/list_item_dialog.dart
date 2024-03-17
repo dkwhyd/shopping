@@ -38,6 +38,8 @@ class ItemListDialog {
               ),
             ),
             TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: 5,
               controller: txtNote,
               decoration: const InputDecoration(
                 hintText: 'Note',
