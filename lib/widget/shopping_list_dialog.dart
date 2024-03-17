@@ -12,6 +12,9 @@ class ShoppingListDialog {
     if (!isNew) {
       txtName.text = list.name!;
       txtPriority.text = list.priority!.toString();
+    } else {
+      txtName.text = '';
+      txtPriority.text = '';
     }
     return AlertDialog(
       title: Text((isNew) ? 'New Shopping list' : 'Edit shopping list'),
@@ -37,8 +40,6 @@ class ShoppingListDialog {
                   child: (!isNew)
                       ? ElevatedButton(
                           onPressed: () async {
-                            list.name = txtName.text;
-                            list.priority = int.parse(txtPriority.text);
                             Navigator.pop(context);
                             await helper.deleteList(list);
                             onDataSaved?.call();
