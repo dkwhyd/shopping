@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:shopping/helper/dbhelper.dart';
-import 'package:shopping/model/shopping_list.dart';
+import 'package:shopping/model/list_items.dart';
 
-class ShoppingListDialog {
+class ItemListDialog {
+  final idList = TextEditingController();
   final txtName = TextEditingController();
-  final txtPriority = TextEditingController();
-  void Function()? onDataSaved;
+  final txtQuantity = TextEditingController();
+  final txtNote = TextEditingController();
+  Function? onDataSaved;
 
-  Widget buildDialog(BuildContext context, ShoppingList list, bool isNew) {
+  Widget buildDialog(BuildContext context, ListItem item, bool isNew) {
     DbHelper helper = DbHelper();
     if (!isNew) {
-      txtName.text = list.name!;
-      txtPriority.text = list.priority!.toString();
+      txtName.text = item.name!;
+      txtQuantity.text = item.quantity!.toString();
+      txtNote.text = item.note.toString();
     } else {
       txtName.text = '';
-      txtPriority.text = '';
+      txtQuantity.text = '';
+      txtNote.text = '';
     }
     return AlertDialog(
       title: Text((isNew) ? 'New Shopping list' : 'Edit shopping list'),
@@ -24,13 +28,19 @@ class ShoppingListDialog {
             TextField(
               controller: txtName,
               decoration: const InputDecoration(
-                hintText: 'Shopping List Name',
+                hintText: 'Item Name',
               ),
             ),
             TextField(
-              controller: txtPriority,
+              controller: txtQuantity,
               decoration: const InputDecoration(
-                hintText: 'Shopping List Priority (1-3)',
+                hintText: 'Quantity',
+              ),
+            ),
+            TextField(
+              controller: txtNote,
+              decoration: const InputDecoration(
+                hintText: 'Note',
               ),
             ),
             Row(
@@ -41,8 +51,8 @@ class ShoppingListDialog {
                       ? ElevatedButton(
                           onPressed: () async {
                             Navigator.pop(context);
-                            await helper.deleteList(list);
-                            onDataSaved?.call();
+                            await helper.deleteItem(item);
+                            onDataSaved!.call();
                           },
                           child: const Text('Delete'),
                         )
@@ -50,11 +60,13 @@ class ShoppingListDialog {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    list.name = txtName.text;
-                    list.priority = int.parse(txtPriority.text);
+                    // item.idList = item.id;
+                    item.name = txtName.text;
+                    item.quantity = txtQuantity.text;
+                    item.note = txtNote.text;
                     Navigator.pop(context);
-                    await helper.insertList(list);
-                    onDataSaved?.call();
+                    await helper.insertItem(item);
+                    onDataSaved!.call();
                   },
                   child: const Text('Save'),
                 ),
