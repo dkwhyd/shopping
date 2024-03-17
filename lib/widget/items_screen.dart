@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shopping/helper/dbhelper.dart';
+import 'package:shopping/model/list_items.dart';
 import 'package:shopping/model/shopping_list.dart';
+import 'package:shopping/widget/list_item_dialog.dart';
 
 // ignore: must_be_immutable
 class ItemsScreen extends StatefulWidget {
@@ -15,14 +17,19 @@ class ItemsScreen extends StatefulWidget {
 class _ItemsScreenState extends State<ItemsScreen> {
   final ShoppingList? shoppingList;
 
-  DbHelper? helper;
+  DbHelper helper = DbHelper();
   List? items;
   _ItemsScreenState(this.shoppingList);
+  ItemListDialog? dialog;
+
+  int? idList;
 
   @override
   void initState() {
-    helper = DbHelper();
-    showData(shoppingList?.id);
+    idList = shoppingList!.id;
+    showData();
+    dialog = ItemListDialog();
+    dialog!.onDataSaved = showData;
     super.initState();
   }
 
@@ -39,21 +46,37 @@ class _ItemsScreenState extends State<ItemsScreen> {
           return ListTile(
             title: Text(items![index].name),
             subtitle: Text(
-                'Quantity: ${items![index].quantity} - Note:${items![index].note}'),
+                'Quantity: ${items![index].quantity} - Note: ${items![index].note}'),
             onTap: () {},
             trailing: IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () {},
+              onPressed: () {
+                // print(items![index].name);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        dialog!.buildDialog(context, items![index], false));
+              },
             ),
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => dialog!.buildDialog(
+                  context, ListItem(0, shoppingList!.id, '', '', ''), true));
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
-  Future showData(var idList) async {
-    await helper!.openDb();
-    items = await helper!.getItems(idList);
+  Future showData() async {
+    await helper.openDb();
+    items = await helper.getItems(idList!);
     setState(() {
       items = items;
     });
