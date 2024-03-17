@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shopping/helper/dbhelper.dart';
 import 'package:shopping/model/list_items.dart';
 import 'package:shopping/model/shopping_list.dart';
+import 'package:shopping/widget/detail_item.dart';
 import 'package:shopping/widget/list_item_dialog.dart';
 
 // ignore: must_be_immutable
@@ -49,7 +50,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
               'Quantity: ${items![index].quantity} - Note: ${items![index].note}',
               overflow: TextOverflow.ellipsis,
             ),
-            onTap: () {},
+            onTap: () {
+              _showBottomSheet(context, items![index]);
+            },
             trailing: IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
@@ -82,5 +85,18 @@ class _ItemsScreenState extends State<ItemsScreen> {
     setState(() {
       items = items;
     });
+  }
+
+  void _showBottomSheet(BuildContext context, ListItem item) {
+    showModalBottomSheet(
+      enableDrag: true,
+      context: context,
+      builder: (BuildContext builder) {
+        final data = item.toMap();
+        return DetailItem(
+            data:
+                data); // Gunakan CustomBottomSheet dari file bottom_sheet.dart
+      },
+    );
   }
 }
