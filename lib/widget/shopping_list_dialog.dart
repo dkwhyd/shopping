@@ -7,7 +7,7 @@ class ShoppingListDialog {
   final txtPriority = TextEditingController();
   void Function()? onDataSaved;
 
-  Widget builDialog(BuildContext context, ShoppingList list, bool isNew) {
+  Widget buildDialog(BuildContext context, ShoppingList list, bool isNew) {
     DbHelper helper = DbHelper();
     if (!isNew) {
       txtName.text = list.name!;
@@ -30,15 +30,34 @@ class ShoppingListDialog {
                 hintText: 'Shopping List Priority (1-3)',
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                list.name = txtName.text;
-                list.priority = int.parse(txtPriority.text);
-                Navigator.pop(context);
-                await helper.insertList(list);
-                onDataSaved?.call();
-              },
-              child: const Text('Save Shopping List'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: (!isNew)
+                      ? ElevatedButton(
+                          onPressed: () async {
+                            list.name = txtName.text;
+                            list.priority = int.parse(txtPriority.text);
+                            Navigator.pop(context);
+                            await helper.deleteList(list);
+                            onDataSaved?.call();
+                          },
+                          child: const Text('Delete'),
+                        )
+                      : null,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    list.name = txtName.text;
+                    list.priority = int.parse(txtPriority.text);
+                    Navigator.pop(context);
+                    await helper.insertList(list);
+                    onDataSaved?.call();
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
             ),
           ],
         ),
