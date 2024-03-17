@@ -42,7 +42,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 'Quantity: ${items![index].quantity} - Note:${items![index].note}'),
             onTap: () {},
             trailing: IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {},
             ),
           );
@@ -54,7 +54,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Future showData(var idList) async {
     await helper!.openDb();
     items = await helper!.getItems(idList);
-    // print(items![0].name);
     setState(() {
       items = items;
     });
