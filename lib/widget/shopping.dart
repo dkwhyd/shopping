@@ -30,28 +30,66 @@ class ShoppingState extends State {
       body: ListView.builder(
         itemCount: (shoppingList != null) ? shoppingList!.length : 0,
         itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(shoppingList![index].name),
-            leading: CircleAvatar(
-              child: Text(shoppingList![index].priority.toString()),
-            ),
-            trailing: IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => dialog!
-                          .buildDialog(context, shoppingList![index], false));
-                  showData();
-                },
-                icon: const Icon(Icons.edit)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ItemsScreen(shoppingList![index]),
-                ),
-              );
+          return Dismissible(
+            key: Key(shoppingList![index].name),
+            onDismissed: (direction) {
+              String strName = shoppingList![index].name;
+              helper.deleteList(shoppingList![index]);
+              setState(() {
+                shoppingList!.removeAt(index);
+              });
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("$strName deleted")));
             },
+            direction: DismissDirection.horizontal,
+            confirmDismiss: (DismissDirection direction) async {
+              return await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Confirm Delete"),
+                      content: Text("Are you sure you want to delete ?"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text("Delete"),
+                        ),
+                      ],
+                    );
+                  });
+            },
+            background: Container(color: Colors.red),
+            child: ListTile(
+              title: Text(shoppingList![index].name),
+              leading: CircleAvatar(
+                child: Text(shoppingList![index].priority.toString()),
+              ),
+              trailing: IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => dialog!
+                            .buildDialog(context, shoppingList![index], false));
+                    showData();
+                  },
+                  icon: const Icon(Icons.edit)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemsScreen(shoppingList![index]),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
