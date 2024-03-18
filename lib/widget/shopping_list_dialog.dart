@@ -36,19 +36,7 @@ class ShoppingListDialog {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  child: (!isNew)
-                      ? ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            await helper.deleteList(list);
-                            onDataSaved?.call();
-                          },
-                          child: const Text('Delete'),
-                        )
-                      : null,
-                ),
-                ElevatedButton(
+                 ElevatedButton(
                   onPressed: () async {
                     list.name = txtName.text;
                     list.priority = int.parse(txtPriority.text);

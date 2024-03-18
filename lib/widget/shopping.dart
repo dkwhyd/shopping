@@ -30,28 +30,101 @@ class ShoppingState extends State {
       body: ListView.builder(
         itemCount: (shoppingList != null) ? shoppingList!.length : 0,
         itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(shoppingList![index].name),
-            leading: CircleAvatar(
-              child: Text(shoppingList![index].priority.toString()),
-            ),
-            trailing: IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => dialog!
-                          .buildDialog(context, shoppingList![index], false));
-                  showData();
-                },
-                icon: const Icon(Icons.edit)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ItemsScreen(shoppingList![index]),
-                ),
-              );
+          return Dismissible(
+            key: Key(shoppingList![index].name),
+            onDismissed: (direction) {
+              String strName = shoppingList![index].name;
+              helper.deleteList(shoppingList![index]);
+              setState(() {
+                shoppingList!.removeAt(index);
+              });
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("$strName deleted")));
             },
+            direction: DismissDirection.horizontal,
+            confirmDismiss: (DismissDirection direction) async {
+              if (direction == DismissDirection.startToEnd) {
+                // Confirm edit logic
+                return showDialog(
+                    context: context,
+                    builder: (BuildContext context) => dialog!
+                        .buildDialog(context, shoppingList![index], false));
+              } else {
+                return await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Confirm Delete"),
+                      content:
+                          const Text("Are you sure you want to delete this list?"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text("Delete"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
+            background: Container(
+              color: Colors.green,
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            secondaryBackground: Container(
+              color: Colors.red,
+              child: const Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            child: ListTile(
+              title: Text(shoppingList![index].name),
+              leading: CircleAvatar(
+                child: Text(shoppingList![index].priority.toString()),
+              ),
+              trailing: IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => dialog!
+                            .buildDialog(context, shoppingList![index], false));
+                    showData();
+                  },
+                  icon: const Icon(Icons.edit)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemsScreen(shoppingList![index]),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
