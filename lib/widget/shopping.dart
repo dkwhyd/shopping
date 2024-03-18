@@ -43,30 +43,65 @@ class ShoppingState extends State {
             },
             direction: DismissDirection.horizontal,
             confirmDismiss: (DismissDirection direction) async {
-              return await showDialog(
+              if (direction == DismissDirection.startToEnd) {
+                // Confirm edit logic
+                return showDialog(
+                    context: context,
+                    builder: (BuildContext context) => dialog!
+                        .buildDialog(context, shoppingList![index], false));
+              } else {
+                return await showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text("Confirm Delete"),
-                      content: Text("Are you sure you want to delete ?"),
+                      title: const Text("Confirm Delete"),
+                      content:
+                          const Text("Are you sure you want to delete this list?"),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop(false);
                           },
-                          child: Text("Cancel"),
+                          child: const Text("Cancel"),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop(true);
                           },
-                          child: Text("Delete"),
+                          child: const Text("Delete"),
                         ),
                       ],
                     );
-                  });
+                  },
+                );
+              }
             },
-            background: Container(color: Colors.red),
+            background: Container(
+              color: Colors.green,
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            secondaryBackground: Container(
+              color: Colors.red,
+              child: const Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
             child: ListTile(
               title: Text(shoppingList![index].name),
               leading: CircleAvatar(
